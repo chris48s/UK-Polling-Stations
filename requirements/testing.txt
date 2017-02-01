@@ -4,6 +4,6 @@ mock
 model-mommy
 python-Levenshtein
 aloe
-aloe_django
+aloe-django==0.1.3
 aloe_webdriver
 vcrpy==1.7.4
