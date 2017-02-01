@@ -12,7 +12,7 @@ django==1.8.4
 djangorestframework==3.2.3
 fastkml==0.11
 git+git://github.com/geomet/geomet.git
-lxml==3.5.0
+lxml==3.7.2
 markdown==2.6.2
 Pillow==2.9.0
 psycopg2==2.6.1
