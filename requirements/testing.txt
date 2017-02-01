@@ -5,5 +5,5 @@ model-mommy
 python-Levenshtein
 aloe
 aloe_django
-aloe_webdriver
+aloe-webdriver==0.5.5
 vcrpy==1.7.4
