@@ -269,6 +269,7 @@ if type(MANAGE_ADDRESSBASE_MODEL) == str \
 # import application constants
 from .constants.councils import *
 from .constants.directions import *
+from .constants.elections import *
 from .constants.importers import *
 from .constants.mapit import *
 from .constants.tiles import *
