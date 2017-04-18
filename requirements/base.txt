@@ -3,7 +3,7 @@
 # to each package in each requirements/*.txt.
 
 dj-database-url==0.3.0
-django-extensions
+django-extensions==1.7.6
 django-filter==0.11.0
 django-localflavor==1.1
 django-model-utils==2.3.1
