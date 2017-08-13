@@ -1,10 +1,14 @@
+dist: trusty
 sudo: false
 language: python
 python:
   - '3.4'
   - '3.5'
 addons:
-  - postgresql: '9.3'
+  postgresql: '9.3'
+  apt:
+    packages:
+      - postgresql-9.3-postgis-2.3
 before_script:
   - psql -U postgres -c "create extension postgis"
 cache:
