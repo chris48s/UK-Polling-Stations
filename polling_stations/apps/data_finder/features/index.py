@@ -9,8 +9,21 @@ from django.conf import settings
 from django.core.management import call_command
 from aloe import before, after, around, step, world
 import aloe_webdriver.django
-from selenium import webdriver
+from selenium.webdriver import PhantomJS
+from selenium.common.exceptions import TimeoutException
 import vcr
+
+
+class PhantomWithRetry(PhantomJS):
+
+    def get(self, url):
+        for i in range(2):
+            try:
+                return super().get(url)
+            except TimeoutException:
+                pass
+        raise TimeoutException
+
 
 selenium_vcr = vcr.VCR()
 # We need to ignore localhost as selenium communicates over local http
@@ -39,7 +52,7 @@ def after_all():
 def setup(scenario, outline, steps):
     # TODO Set browser in django.conf.settings
     # world.browser = webdriver.Chrome()
-    world.browser = webdriver.PhantomJS()
+    world.browser = PhantomWithRetry()
     world.browser.set_page_load_timeout(10)
     world.browser.set_script_timeout(10)
 
