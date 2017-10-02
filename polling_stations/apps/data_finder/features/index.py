@@ -21,7 +21,7 @@ class PhantomWithRetry(PhantomJS):
             try:
                 return super()._dispatch(l_call, l_args, d_call, d_args)
             except TimeoutException:
-                pass
+                print('retrying...')
         raise TimeoutException
 
 
