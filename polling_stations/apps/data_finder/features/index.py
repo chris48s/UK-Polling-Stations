@@ -28,8 +28,12 @@ def before_all():
 
 @after.all
 def after_all():
-    # clean up static assets
-    shutil.rmtree(temp_dir)
+    try:
+        # attempt to clean up static assets
+        shutil.rmtree(temp_dir)
+    except OSError:
+        # if it fails, just leave our mess behind
+        pass
 
 @before.each_example
 def setup(scenario, outline, steps):
