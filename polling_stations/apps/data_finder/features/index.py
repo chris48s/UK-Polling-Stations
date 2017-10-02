@@ -16,10 +16,10 @@ import vcr
 
 class PhantomWithRetry(PhantomJS):
 
-    def get(self, url):
+    def _dispatch(self, l_call, l_args, d_call, d_args):
         for i in range(2):
             try:
-                return super().get(url)
+                return super()._dispatch(l_call, l_args, d_call, d_args)
             except TimeoutException:
                 pass
         raise TimeoutException
