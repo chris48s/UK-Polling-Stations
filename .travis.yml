@@ -40,7 +40,7 @@ install:
   - tar xvzf drafter-v3.2.7.tar.gz
   - cd drafter-v3.2.7
   - /usr/bin/python2.7 configure --shared
-  - make libdrafter
+  - test -e build/out/Release/lib.target/libdrafter.so || make libdrafter
   - sudo cp build/out/Release/lib.target/libdrafter.so /usr/lib/libdrafter.so
   - sudo mkdir -p /usr/include/drafter
   - sudo cp src/drafter.h /usr/include/drafter/drafter.h
