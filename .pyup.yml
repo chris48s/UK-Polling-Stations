@@ -1,0 +1,4 @@
+update: all
+pin: False
+schedule: "every day"
+search: True
