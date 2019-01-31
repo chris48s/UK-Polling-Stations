@@ -349,6 +349,24 @@ class AddressSet(CustomSet):
         for e in self.elements:
             return e.council.council_id
 
+    def find_duplicate_uprns(self):
+        uprn_counts = {}
+
+        for e in self.elements:
+            if not e.uprn:
+                continue
+            if e.uprn in uprn_counts:
+                uprn_counts[e.uprn] = uprn_counts[e.uprn] + 1
+            else:
+                uprn_counts[e.uprn] = 1
+
+        for uprn, count in uprn_counts.items():
+            if count > 1:
+                self.logger.log_message(
+                    logging.INFO,
+                    "Found duplicate UPRN {} in Residential Addresses".format(uprn),
+                )
+
     def save(self, batch_size):
 
         self.elements = self.remove_ambiguous_addresses()
@@ -356,6 +374,7 @@ class AddressSet(CustomSet):
         self.elements = self.remove_invalid_uprns(addressbase_data)
         self.elements = self.attach_doorstep_gridrefs(addressbase_data)
         self.elements = self.remove_addresses_outside_target_auth()
+        self.find_duplicate_uprns()
 
         addresses_db = []
 
