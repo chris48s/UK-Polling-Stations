@@ -266,12 +266,15 @@ class AddressList:
             if record["uprn"] in addressbase_data:
                 record["location"] = addressbase_data[record["uprn"]]["location"]
 
-    def handle_invalid_uprns(self, addressbase_data, fuzzy_match, match_threshold):
+    def handle_invalid_uprns(
+        self, addressbase_data, fuzzy_match, match_threshold, delete_unmatched_postcodes
+    ):
         postcode_lookup = self.get_postcode_lookup()
 
         def is_split_postcode(postcode):
             return postcode in postcode_lookup and len(postcode_lookup[postcode]) > 1
 
+        bad_postcodes = set()
         for record in self.elements:
             if not record["uprn"]:
                 continue
@@ -331,6 +334,8 @@ class AddressList:
                     ):
                         # this needs manual review
                         loglevel = logging.WARNING
+                        bad_postcodes.add(record["postcode"])
+                        bad_postcodes.add(addressbase_record["postcode"])
                     else:
                         # if neither postcode it split or if moving the address
                         # from one district to the other would make no difference
@@ -346,6 +351,26 @@ class AddressList:
                         variable=(record, addressbase_record, match_quality),
                     )
                     record["uprn"] = ""
+
+        if fuzzy_match and delete_unmatched_postcodes:
+
+            def keep_record(record):
+                if record["postcode"] in bad_postcodes:
+                    self.logger.log_message(
+                        logging.INFO,
+                        "Discarding record: Postcode is split and contains UPRN/postcode conflicts not resolved by fuzzy matching:\n%s",
+                        variable=record,
+                        pretty=True,
+                    )
+                    return False
+                return True
+
+            if not bad_postcodes:
+                return
+
+            # if we found any postcodes,
+            # remove all records matching any of these postcodes
+            self.elements = [e for e in self.elements if keep_record(e)]
 
     def remove_addresses_outside_target_auth(self):
         """
@@ -431,11 +456,15 @@ class AddressList:
                     ),
                 )
 
-    def save(self, batch_size, fuzzy_match, match_threshold):
+    def save(
+        self, batch_size, fuzzy_match, match_threshold, delete_unmatched_postcodes
+    ):
 
         self.remove_ambiguous_addresses_by_address()
         addressbase_data = get_uprn_hash_table(self.council_id)
-        self.handle_invalid_uprns(addressbase_data, fuzzy_match, match_threshold)
+        self.handle_invalid_uprns(
+            addressbase_data, fuzzy_match, match_threshold, delete_unmatched_postcodes
+        )
         self.attach_doorstep_gridrefs(addressbase_data)
         self.remove_addresses_outside_target_auth()
         self.remove_ambiguous_addresses_by_uprn()

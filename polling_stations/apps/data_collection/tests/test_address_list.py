@@ -506,7 +506,7 @@ class AddressListTest(TestCase):
             },
         }
 
-        address_list.handle_invalid_uprns(addressbase, True, 100)
+        address_list.handle_invalid_uprns(addressbase, True, 100, False)
 
         # all the records should still be in the set
         self.assertEqual(3, len(address_list.elements))
@@ -573,7 +573,7 @@ class AddressListTest(TestCase):
             # 00004 is not in here
         }
 
-        address_list.handle_invalid_uprns(addressbase, True, 100)
+        address_list.handle_invalid_uprns(addressbase, True, 100, False)
 
         # 00003 and 00004 should still be in the set
         self.assertEqual(4, len(address_list.elements))
